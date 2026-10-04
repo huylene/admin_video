@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản lý Video — Video Admin Manager</title>
+
+  <link rel="stylesheet" href="assets/css/variables.css">
+  <link rel="stylesheet" href="assets/css/reset.css">
+  <link rel="stylesheet" href="assets/css/layout.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/css/pages.css">
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/supabase.js"></script>
+  <script src="assets/js/ui.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/guards.js"></script>
+  <script src="assets/js/upload.js"></script>
+  <script src="assets/js/api.js"></script>
+</head>
+<body>
+  <div class="app-layout">
+    <aside class="app-sidebar"></aside>
+
+    <div class="app-main">
+      <header class="app-topbar"></header>
+
+      <main class="app-content">
+        <!-- Page Header -->
+        <div class="page-header">
+          <div>
+            <h2 style="font-size: var(--font-size-2xl); font-weight: 700; color: var(--text-main);">Danh sách Video</h2>
+            <p style="font-size: var(--font-size-sm); color: var(--text-muted); margin-top: 4px;">Quản lý kho video, chỉnh sửa thông tin, phân loại và theo dõi lượt xem</p>
+          </div>
+          <div class="page-header-actions">
+            <a href="video-edit.html" class="btn btn-primary">
+              <i data-lucide="plus-circle"></i>
+              <span>Thêm video mới</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Filter & Search Toolbar -->
+        <div class="card" style="margin-bottom: var(--space-6); padding: var(--space-4);">
+          <div class="toolbar-wrap">
+            <div class="toolbar-search">
+              <i data-lucide="search" style="width: 18px; height: 18px; color: var(--text-muted);"></i>
+              <input type="text" id="video-search-input" class="form-input" placeholder="Tìm theo tiêu đề video...">
+            </div>
+
+            <div class="toolbar-filters">
+              <select id="video-category-filter" class="form-select" style="width: auto; min-width: 160px;">
+                <option value="">Tất cả danh mục</option>
+              </select>
+
+              <select id="video-status-filter" class="form-select" style="width: auto; min-width: 140px;">
+                <option value="">Tất cả trạng thái</option>
+                <option value="published">Đã xuất bản</option>
+                <option value="draft">Bản nháp</option>
+                <option value="archived">Lưu trữ</option>
+              </select>
+
+              <select id="video-sort-filter" class="form-select" style="width: auto; min-width: 160px;">
+                <option value="created_at-desc">Mới nhất trước</option>
+                <option value="created_at-asc">Cũ nhất trước</option>
+                <option value="views-desc">Nhiều lượt xem nhất</option>
+                <option value="views-asc">Ít lượt xem nhất</option>
+              </select>
+
+              <button class="btn btn-secondary" id="reset-filters-btn">
+                <i data-lucide="rotate-ccw"></i>
+                <span>Đặt lại</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Videos Table Card -->
+        <div class="card">
+          <div class="table-container" style="border: none;">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th style="width: 60px;">ID</th>
+                  <th style="width: 80px;">Thumbnail</th>
+                  <th>Tiêu đề</th>
+                  <th>Danh mục</th>
+                  <th>Lượt xem</th>
+                  <th>Trạng thái</th>
+                  <th>Ngày tạo</th>
+                  <th style="width: 130px; text-align: right;">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody id="videos-tbody">
+                <tr>
+                  <td colspan="8" style="text-align: center; padding: var(--space-8); color: var(--text-muted);">
+                    <div class="spinner spinner-dark" style="margin-bottom: 8px;"></div>
+                    <div>Đang tải danh sách video...</div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Empty State -->
+          <div id="videos-empty-state" class="empty-state" style="display: none;">
+            <i data-lucide="video-off" class="empty-icon"></i>
+            <h3 class="empty-title">Không tìm thấy video nào</h3>
+            <p class="empty-text">Chưa có video nào khớp với điều kiện tìm kiếm hoặc hệ thống chưa có dữ liệu.</p>
+            <a href="video-edit.html" class="btn btn-primary btn-sm">
+              <i data-lucide="plus"></i>
+              <span>Thêm video ngay</span>
+            </a>
+          </div>
+
+          <!-- Pagination -->
+          <div class="pagination" id="videos-pagination">
+            <div style="font-size: var(--font-size-sm); color: var(--text-muted);">
+              Hiển thị <span id="page-count-text">0</span> video
+            </div>
+            <div class="pagination-controls">
+              <button class="btn btn-outline btn-sm" id="prev-page-btn" disabled>
+                <i data-lucide="chevron-left"></i>
+                <span>Trước</span>
+              </button>
+              <span id="page-info-text" style="font-size: var(--font-size-sm); font-weight: 600; padding: 0 var(--space-2);">1 / 1</span>
+              <button class="btn btn-outline btn-sm" id="next-page-btn" disabled>
+                <span>Sau</span>
+                <i data-lucide="chevron-right"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="assets/js/videos.js"></script>
+</body>
+</html>

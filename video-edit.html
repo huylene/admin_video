@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tạo / Sửa Video — Video Admin Manager</title>
+
+  <link rel="stylesheet" href="assets/css/variables.css">
+  <link rel="stylesheet" href="assets/css/reset.css">
+  <link rel="stylesheet" href="assets/css/layout.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/css/pages.css">
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/supabase.js"></script>
+  <script src="assets/js/ui.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/guards.js"></script>
+  <script src="assets/js/upload.js"></script>
+  <script src="assets/js/api.js"></script>
+</head>
+<body>
+  <div class="app-layout">
+    <aside class="app-sidebar"></aside>
+
+    <div class="app-main">
+      <header class="app-topbar"></header>
+
+      <main class="app-content">
+        <!-- Page Header -->
+        <div class="page-header">
+          <div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+              <a href="videos.html" class="btn btn-ghost btn-sm" style="padding-left: 0;">
+                <i data-lucide="arrow-left"></i>
+                <span>Quay lại</span>
+              </a>
+            </div>
+            <h2 id="page-heading" style="font-size: var(--font-size-2xl); font-weight: 700; color: var(--text-main);">Thêm Video Mới</h2>
+            <p id="page-subheading" style="font-size: var(--font-size-sm); color: var(--text-muted);">Tải lên video, hình ảnh đại diện và điền các thông tin mô tả chi tiết</p>
+          </div>
+          <div class="page-header-actions">
+            <a href="videos.html" class="btn btn-secondary">Hủy bỏ</a>
+            <button type="button" id="save-video-btn" class="btn btn-primary">
+              <i data-lucide="save"></i>
+              <span id="save-btn-text">Lưu video</span>
+              <span id="save-btn-spinner" class="spinner" style="display: none;"></span>
+            </button>
+          </div>
+        </div>
+
+        <form id="video-form">
+          <div class="form-layout">
+            <!-- Left Column: Metadata -->
+            <div>
+              <div class="card" style="margin-bottom: var(--space-6);">
+                <div class="card-header">
+                  <h3 class="card-title">Thông tin cơ bản</h3>
+                </div>
+                <div class="card-body">
+                  <div class="form-group">
+                    <label class="form-label required" for="video-title">Tiêu đề video</label>
+                    <input type="text" id="video-title" class="form-input" placeholder="Ví dụ: Giới thiệu giao diện quản trị mới..." required>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="video-slug">Đường dẫn thân thiện (Slug)</label>
+                    <input type="text" id="video-slug" class="form-input" placeholder="gioi-thieu-giao-dien-quan-tri-moi">
+                    <div class="form-hint">Để trống để tự động tạo từ tiêu đề video.</div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label required" for="video-category">Danh mục video</label>
+                    <select id="video-category" class="form-select" required>
+                      <option value="">-- Chọn danh mục --</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="video-description">Mô tả video</label>
+                    <textarea id="video-description" class="form-textarea" placeholder="Nhập tóm tắt hoặc nội dung chi tiết của video..."></textarea>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Video File Upload Card -->
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">Tệp Video (Tối đa 200MB)</h3>
+                  <span id="video-required-badge" class="badge badge-warning">Bắt buộc</span>
+                </div>
+                <div class="card-body">
+                  <div class="dropzone" id="video-dropzone">
+                    <input type="file" id="video-file-input" accept="video/mp4,video/webm,video/quicktime,video/mkv" style="display: none;">
+                    <i data-lucide="video" class="dropzone-icon"></i>
+                    <div class="dropzone-title">Nhấp để chọn tệp hoặc kéo thả file video vào đây</div>
+                    <div class="dropzone-hint">Hỗ trợ định dạng MP4, WebM, MOV. Tối đa 200MB.</div>
+                  </div>
+
+                  <!-- Upload Progress Bar -->
+                  <div id="video-upload-progress" style="display: none; margin-top: var(--space-4);">
+                    <div style="display: flex; justify-content: space-between; font-size: var(--font-size-xs); color: var(--text-muted); margin-bottom: 4px;">
+                      <span>Đang tải lên video...</span>
+                      <span id="video-progress-percent">0%</span>
+                    </div>
+                    <div class="progress-bar-wrap">
+                      <div class="progress-bar-fill" id="video-progress-fill"></div>
+                    </div>
+                  </div>
+
+                  <!-- Video Preview Player -->
+                  <div id="video-preview-wrap" style="display: none; margin-top: var(--space-4);">
+                    <div style="font-size: var(--font-size-xs); font-weight: 600; color: var(--text-muted); margin-bottom: var(--space-2);">Xem trước video:</div>
+                    <div class="preview-box">
+                      <video id="video-preview-player" controls preload="metadata"></video>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: var(--space-2); font-size: var(--font-size-xs); color: var(--text-muted);">
+                      <span id="video-file-name">filename.mp4</span>
+                      <span id="video-duration-info">Thời lượng: 00:00</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Column: Thumbnail, Status & Publishing -->
+            <div>
+              <!-- Publishing & Status Card -->
+              <div class="card" style="margin-bottom: var(--space-6);">
+                <div class="card-header">
+                  <h3 class="card-title">Cấu hình xuất bản</h3>
+                </div>
+                <div class="card-body">
+                  <div class="form-group">
+                    <label class="form-label required" for="video-status">Trạng thái hiển thị</label>
+                    <select id="video-status" class="form-select" required>
+                      <option value="draft">Bản nháp (Draft)</option>
+                      <option value="published" selected>Đã xuất bản (Published)</option>
+                      <option value="archived">Lưu trữ (Archived)</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="video-published-at">Ngày xuất bản</label>
+                    <input type="datetime-local" id="video-published-at" class="form-input">
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="video-views">Số lượt xem ban đầu</label>
+                    <input type="number" id="video-views" class="form-input" min="0" value="0">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Thumbnail Card -->
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">Ảnh bìa (Thumbnail)</h3>
+                </div>
+                <div class="card-body">
+                  <div class="dropzone" id="thumb-dropzone" style="padding: var(--space-6) var(--space-2);">
+                    <input type="file" id="thumb-file-input" accept="image/jpeg,image/png,image/webp" style="display: none;">
+                    <i data-lucide="image" class="dropzone-icon" style="width: 36px; height: 36px;"></i>
+                    <div class="dropzone-title" style="font-size: 13px;">Chọn ảnh đại diện</div>
+                    <div class="dropzone-hint">Khuyến nghị tỉ lệ 16:9 (JPG, PNG, WebP)</div>
+                  </div>
+
+                  <!-- Thumbnail Preview -->
+                  <div id="thumb-preview-wrap" style="display: none; margin-top: var(--space-3);">
+                    <div class="preview-box">
+                      <img id="thumb-preview-img" alt="Thumbnail Preview">
+                    </div>
+                  </div>
+
+                  <div class="form-group" style="margin-top: var(--space-4);">
+                    <label class="form-label" for="thumb-url-input">Hoặc dán URL ảnh trực tiếp</label>
+                    <input type="url" id="thumb-url-input" class="form-input" placeholder="https://example.com/thumbnail.jpg">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </main>
+    </div>
+  </div>
+
+  <script src="assets/js/video-edit.js"></script>
+</body>
+</html>

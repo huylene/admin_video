@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tài khoản cá nhân — Video Admin Manager</title>
+
+  <link rel="stylesheet" href="assets/css/variables.css">
+  <link rel="stylesheet" href="assets/css/reset.css">
+  <link rel="stylesheet" href="assets/css/layout.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/css/pages.css">
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/supabase.js"></script>
+  <script src="assets/js/ui.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/guards.js"></script>
+  <script src="assets/js/upload.js"></script>
+</head>
+<body>
+  <div class="app-layout">
+    <aside class="app-sidebar"></aside>
+
+    <div class="app-main">
+      <header class="app-topbar"></header>
+
+      <main class="app-content">
+        <!-- Page Header -->
+        <div class="page-header">
+          <div>
+            <h2 style="font-size: var(--font-size-2xl); font-weight: 700; color: var(--text-main);">Hồ sơ Tài khoản</h2>
+            <p style="font-size: var(--font-size-sm); color: var(--text-muted); margin-top: 4px;">Cập nhật thông tin định danh và đổi mật khẩu bảo mật</p>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6); max-width: 1000px;">
+          <!-- Profile Card -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Thông tin định danh</h3>
+            </div>
+            <div class="card-body">
+              <div class="profile-card-header">
+                <div id="avatar-container" style="position: relative;">
+                  <div class="profile-avatar-large" id="profile-avatar-preview">U</div>
+                  <input type="file" id="avatar-file-input" accept="image/*" style="display: none;">
+                  <button type="button" class="btn btn-secondary btn-sm" id="change-avatar-btn" style="position: absolute; bottom: -6px; right: -6px; border-radius: var(--radius-full); width: 28px; height: 28px; padding: 0;">
+                    <i data-lucide="camera" style="width: 14px; height: 14px;"></i>
+                  </button>
+                </div>
+                <div>
+                  <h4 id="profile-display-name" style="font-size: var(--font-size-lg); font-weight: 700; color: var(--text-main);">—</h4>
+                  <div style="margin-top: 4px;">
+                    <span id="profile-role-badge" class="badge badge-neutral">—</span>
+                  </div>
+                </div>
+              </div>
+
+              <form id="profile-form">
+                <div class="form-group">
+                  <label class="form-label required" for="profile-username">Tên người dùng (Username)</label>
+                  <input type="text" id="profile-username" class="form-input" required>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="profile-email">Địa chỉ Email</label>
+                  <input type="email" id="profile-email" class="form-input" disabled style="background-color: var(--bg-subtle); color: var(--text-muted);">
+                  <div class="form-hint">Email đăng nhập được quản lý bởi Supabase Auth.</div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Ngày tham gia</label>
+                  <input type="text" id="profile-created-at" class="form-input" disabled style="background-color: var(--bg-subtle); color: var(--text-muted);">
+                </div>
+
+                <button type="submit" id="save-profile-btn" class="btn btn-primary" style="margin-top: var(--space-2);">
+                  <span id="profile-btn-text">Lưu thông tin</span>
+                  <span id="profile-btn-spinner" class="spinner" style="display: none;"></span>
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Password Change Card -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Đổi mật khẩu</h3>
+            </div>
+            <div class="card-body">
+              <form id="password-form">
+                <div class="form-group">
+                  <label class="form-label required" for="new-pass">Mật khẩu mới</label>
+                  <input type="password" id="new-pass" class="form-input" placeholder="Tối thiểu 6 ký tự" minlength="6" required autocomplete="new-password">
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label required" for="confirm-pass">Xác nhận mật khẩu mới</label>
+                  <input type="password" id="confirm-pass" class="form-input" placeholder="Nhập lại mật khẩu mới" minlength="6" required autocomplete="new-password">
+                </div>
+
+                <button type="submit" id="save-password-btn" class="btn btn-primary" style="margin-top: var(--space-4);">
+                  <span id="pass-btn-text">Cập nhật mật khẩu</span>
+                  <span id="pass-btn-spinner" class="spinner" style="display: none;"></span>
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="assets/js/account.js"></script>
+</body>
+</html>

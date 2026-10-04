@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — Video Admin Manager</title>
+
+  <link rel="stylesheet" href="assets/css/variables.css">
+  <link rel="stylesheet" href="assets/css/reset.css">
+  <link rel="stylesheet" href="assets/css/layout.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/css/pages.css">
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/supabase.js"></script>
+  <script src="assets/js/ui.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/guards.js"></script>
+  <script src="assets/js/upload.js"></script>
+  <script src="assets/js/api.js"></script>
+</head>
+<body>
+  <div class="app-layout">
+    <aside class="app-sidebar"></aside>
+
+    <div class="app-main">
+      <header class="app-topbar"></header>
+
+      <main class="app-content">
+        <!-- Page Header -->
+        <div class="page-header">
+          <div>
+            <h2 style="font-size: var(--font-size-2xl); font-weight: 700; color: var(--text-main);">Tổng quan hệ thống</h2>
+            <p style="font-size: var(--font-size-sm); color: var(--text-muted); margin-top: 4px;">Theo dõi số liệu thống kê video, lượt xem và dung lượng lưu trữ</p>
+          </div>
+          <div class="page-header-actions">
+            <button class="btn btn-outline" id="refresh-dashboard-btn">
+              <i data-lucide="refresh-cw"></i>
+              <span>Làm mới</span>
+            </button>
+            <a href="video-edit.html" class="btn btn-primary">
+              <i data-lucide="plus-circle"></i>
+              <span>Thêm video mới</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- KPI Cards Grid -->
+        <div class="kpi-grid">
+          <!-- Total Videos -->
+          <div class="kpi-card">
+            <div class="kpi-content">
+              <span class="kpi-label">Tổng số Video</span>
+              <span class="kpi-value" id="kpi-videos">—</span>
+              <span class="kpi-subtext">
+                <i data-lucide="video" style="width: 14px; height: 14px;"></i>
+                <span>Trên toàn hệ thống</span>
+              </span>
+            </div>
+            <div class="kpi-icon-wrap kpi-icon-indigo">
+              <i data-lucide="film"></i>
+            </div>
+          </div>
+
+          <!-- Total Views -->
+          <div class="kpi-card">
+            <div class="kpi-content">
+              <span class="kpi-label">Tổng lượt xem</span>
+              <span class="kpi-value" id="kpi-views">—</span>
+              <span class="kpi-subtext">
+                <i data-lucide="eye" style="width: 14px; height: 14px;"></i>
+                <span>Lượt tương tác tích lũy</span>
+              </span>
+            </div>
+            <div class="kpi-icon-wrap kpi-icon-emerald">
+              <i data-lucide="trending-up"></i>
+            </div>
+          </div>
+
+          <!-- Storage Used -->
+          <div class="kpi-card">
+            <div class="kpi-content">
+              <span class="kpi-label">Dung lượng Storage</span>
+              <span class="kpi-value" id="kpi-storage">—</span>
+              <span class="kpi-subtext">
+                <i data-lucide="hard-drive" style="width: 14px; height: 14px;"></i>
+                <span>Video &amp; Thumbnails</span>
+              </span>
+            </div>
+            <div class="kpi-icon-wrap kpi-icon-amber">
+              <i data-lucide="database"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="charts-grid">
+          <!-- Top 10 Videos Bar Chart -->
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3 class="chart-title">Top 10 Video xem nhiều nhất</h3>
+              <span class="badge badge-neutral">Xếp hạng theo Views</span>
+            </div>
+            <div class="chart-container" id="bar-chart-container">
+              <canvas id="topVideosChart"></canvas>
+            </div>
+            <div id="bar-chart-empty" class="empty-state" style="display: none; padding: var(--space-8) 0;">
+              <i data-lucide="bar-chart-2" class="empty-icon"></i>
+              <div class="empty-title">Chưa có dữ liệu video</div>
+              <div class="empty-text">Thêm video đầu tiên để bắt đầu theo dõi thống kê lượt xem.</div>
+            </div>
+          </div>
+
+          <!-- Views Trend Line Chart -->
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3 class="chart-title">Xu hướng lượt xem</h3>
+              <div class="chart-actions">
+                <button class="btn btn-sm btn-primary" id="trend-day-btn">Theo Ngày</button>
+                <button class="btn btn-sm btn-outline" id="trend-month-btn">Theo Tháng</button>
+              </div>
+            </div>
+            <div class="chart-container" id="line-chart-container">
+              <canvas id="viewsTrendChart"></canvas>
+            </div>
+            <div id="line-chart-empty" class="empty-state" style="display: none; padding: var(--space-8) 0;">
+              <i data-lucide="activity" class="empty-icon"></i>
+              <div class="empty-title">Chưa có nhật ký lượt xem</div>
+              <div class="empty-text">Lượt xem theo ngày sẽ được ghi nhận tự động khi người dùng xem video.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Videos Section -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Video tải lên gần đây</h3>
+            <a href="videos.html" class="btn btn-outline btn-sm">Xem tất cả</a>
+          </div>
+          <div class="table-container" style="border: none; border-radius: 0;">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Thumbnail</th>
+                  <th>Tiêu đề</th>
+                  <th>Danh mục</th>
+                  <th>Lượt xem</th>
+                  <th>Trạng thái</th>
+                  <th>Ngày tạo</th>
+                </tr>
+              </thead>
+              <tbody id="recent-videos-tbody">
+                <tr>
+                  <td colspan="6" style="text-align: center; padding: var(--space-8); color: var(--text-muted);">
+                    <div class="spinner spinner-dark" style="margin-bottom: 8px;"></div>
+                    <div>Đang tải dữ liệu...</div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="assets/js/dashboard.js"></script>
+</body>
+</html>

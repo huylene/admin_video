@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng nhập — Video Admin Manager</title>
+  
+  <link rel="stylesheet" href="assets/css/variables.css">
+  <link rel="stylesheet" href="assets/css/reset.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/css/pages.css">
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/supabase.js"></script>
+  <script src="assets/js/ui.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/guards.js"></script>
+</head>
+<body>
+  <div class="auth-wrapper">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="auth-logo">
+          <i data-lucide="play-circle"></i>
+        </div>
+        <h2 class="auth-title">Đăng nhập</h2>
+        <p class="auth-subtitle">Hệ thống quản trị video cao cấp</p>
+      </div>
+
+      <div id="auth-error-alert" style="display: none; padding: 10px 14px; background-color: var(--danger-light); color: var(--danger-text); border: 1px solid #fecaca; border-radius: var(--radius-md); font-size: 13px; margin-bottom: 16px;"></div>
+
+      <form id="login-form">
+        <div class="form-group">
+          <label class="form-label required" for="email">Địa chỉ Email</label>
+          <input type="email" id="email" class="form-input" placeholder="admin@example.com" required autocomplete="email">
+        </div>
+
+        <div class="form-group">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-2);">
+            <label class="form-label required" for="password" style="margin-bottom: 0;">Mật khẩu</label>
+            <a href="forgot-password.html" class="auth-link" style="font-size: var(--font-size-xs);">Quên mật khẩu?</a>
+          </div>
+          <input type="password" id="password" class="form-input" placeholder="••••••••" required autocomplete="current-password">
+        </div>
+
+        <button type="submit" id="submit-btn" class="btn btn-primary" style="width: 100%; margin-top: var(--space-2);">
+          <span id="btn-text">Đăng nhập</span>
+          <span id="btn-spinner" class="spinner" style="display: none;"></span>
+        </button>
+      </form>
+
+      <!-- Quick Demo Credentials Fill -->
+      <div style="margin-top: var(--space-6); padding: var(--space-3); background-color: var(--bg-subtle); border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+        <div style="font-size: var(--font-size-xs); color: var(--text-muted); font-weight: 600; margin-bottom: var(--space-2); text-transform: uppercase;">
+          Tài khoản demo mẫu (nhấn để điền):
+        </div>
+        <div style="display: flex; gap: var(--space-2);">
+          <button type="button" class="btn btn-outline btn-sm" id="fill-admin-btn" style="flex: 1; font-size: 11px;">
+            admin1@gmail.com
+          </button>
+          <button type="button" class="btn btn-outline btn-sm" id="fill-user-btn" style="flex: 1; font-size: 11px;">
+            user1@gmail.com
+          </button>
+        </div>
+      </div>
+
+      <div style="margin-top: var(--space-4); text-align: center;">
+        <button type="button" class="btn btn-ghost btn-sm" style="font-size: 12px; color: var(--text-muted);" onclick="window.UI.showConfigModal()">
+          <i data-lucide="settings" style="width: 14px; height: 14px;"></i>
+          <span>Cấu hình kết nối Supabase</span>
+        </button>
+      </div>
+
+      <div class="auth-footer">
+        Chưa có tài khoản? <a href="register.html" class="auth-link">Đăng ký ngay</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/js/login.js"></script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng ký tài khoản — Video Admin Manager</title>
+  
+  <link rel="stylesheet" href="assets/css/variables.css">
+  <link rel="stylesheet" href="assets/css/reset.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/css/pages.css">
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/supabase.js"></script>
+  <script src="assets/js/ui.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/guards.js"></script>
+</head>
+<body>
+  <div class="auth-wrapper">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="auth-logo">
+          <i data-lucide="user-plus"></i>
+        </div>
+        <h2 class="auth-title">Đăng ký</h2>
+        <p class="auth-subtitle">Tạo tài khoản quản trị viên mới</p>
+      </div>
+
+      <div id="auth-error-alert" style="display: none; padding: 10px 14px; background-color: var(--danger-light); color: var(--danger-text); border: 1px solid #fecaca; border-radius: var(--radius-md); font-size: 13px; margin-bottom: 16px;"></div>
+
+      <form id="register-form">
+        <div class="form-group">
+          <label class="form-label required" for="username">Tên người dùng (Username)</label>
+          <input type="text" id="username" class="form-input" placeholder="johndoe" required autocomplete="username">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label required" for="email">Địa chỉ Email</label>
+          <input type="email" id="email" class="form-input" placeholder="user@example.com" required autocomplete="email">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label required" for="password">Mật khẩu</label>
+          <input type="password" id="password" class="form-input" placeholder="Tối thiểu 6 ký tự" minlength="6" required autocomplete="new-password">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label required" for="confirm-password">Xác nhận mật khẩu</label>
+          <input type="password" id="confirm-password" class="form-input" placeholder="Nhập lại mật khẩu" minlength="6" required autocomplete="new-password">
+        </div>
+
+        <button type="submit" id="submit-btn" class="btn btn-primary" style="width: 100%; margin-top: var(--space-3);">
+          <span id="btn-text">Đăng ký tài khoản</span>
+          <span id="btn-spinner" class="spinner" style="display: none;"></span>
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        Đã có tài khoản? <a href="login.html" class="auth-link">Đăng nhập</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/js/register.js"></script>
+</body>
+</html>

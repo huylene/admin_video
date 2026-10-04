@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản lý Danh mục — Video Admin Manager</title>
+
+  <link rel="stylesheet" href="assets/css/variables.css">
+  <link rel="stylesheet" href="assets/css/reset.css">
+  <link rel="stylesheet" href="assets/css/layout.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/css/pages.css">
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/supabase.js"></script>
+  <script src="assets/js/ui.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/guards.js"></script>
+  <script src="assets/js/api.js"></script>
+</head>
+<body>
+  <div class="app-layout">
+    <aside class="app-sidebar"></aside>
+
+    <div class="app-main">
+      <header class="app-topbar"></header>
+
+      <main class="app-content">
+        <!-- Page Header -->
+        <div class="page-header">
+          <div>
+            <h2 style="font-size: var(--font-size-2xl); font-weight: 700; color: var(--text-main);">Quản lý Danh mục</h2>
+            <p style="font-size: var(--font-size-sm); color: var(--text-muted); margin-top: 4px;">Phân nhóm video theo các chủ đề và thể loại nội dung</p>
+          </div>
+          <div class="page-header-actions">
+            <button class="btn btn-primary" id="open-create-category-btn">
+              <i data-lucide="plus-circle"></i>
+              <span>Thêm danh mục</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Categories Table Card -->
+        <div class="card">
+          <div class="table-container" style="border: none;">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Tên danh mục</th>
+                  <th>Slug</th>
+                  <th>Mô tả</th>
+                  <th>Số lượng Video</th>
+                  <th>Ngày tạo</th>
+                  <th style="width: 120px; text-align: right;">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody id="categories-tbody">
+                <tr>
+                  <td colspan="6" style="text-align: center; padding: var(--space-8); color: var(--text-muted);">
+                    <div class="spinner spinner-dark" style="margin-bottom: 8px;"></div>
+                    <div>Đang nạp danh mục...</div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Empty State -->
+          <div id="categories-empty-state" class="empty-state" style="display: none;">
+            <i data-lucide="folder-minus" class="empty-icon"></i>
+            <h3 class="empty-title">Chưa có danh mục nào</h3>
+            <p class="empty-text">Hãy tạo danh mục đầu tiên để tổ chức và phân loại các video của bạn.</p>
+            <button class="btn btn-primary btn-sm" id="empty-create-btn">
+              <i data-lucide="plus"></i>
+              <span>Tạo danh mục ngay</span>
+            </button>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Category Modal (Create / Edit) -->
+  <div id="category-modal" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="cat-modal-title">Thêm danh mục mới</h3>
+        <button class="btn btn-ghost btn-sm" id="close-cat-modal-btn">&times;</button>
+      </div>
+      <form id="category-form">
+        <input type="hidden" id="cat-edit-id">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label required" for="cat-name">Tên danh mục</label>
+            <input type="text" id="cat-name" class="form-input" placeholder="Ví dụ: Công nghệ & Đổi mới" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label required" for="cat-slug">Đường dẫn thân thiện (Slug)</label>
+            <input type="text" id="cat-slug" class="form-input" placeholder="cong-nghe-doi-moi" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="cat-desc">Mô tả danh mục</label>
+            <textarea id="cat-desc" class="form-textarea" placeholder="Giới thiệu tóm tắt về danh mục này..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="cancel-cat-modal-btn">Hủy</button>
+          <button type="submit" class="btn btn-primary" id="save-cat-btn">
+            <span id="save-cat-text">Lưu danh mục</span>
+            <span id="save-cat-spinner" class="spinner" style="display: none;"></span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="assets/js/categories.js"></script>
+</body>
+</html>

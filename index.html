@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video Admin Manager</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/supabase.js"></script>
+  <script src="assets/js/auth.js"></script>
+</head>
+<body style="font-family: sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; background-color: #f8fafc;">
+  <div style="text-align: center;">
+    <div style="width: 32px; height: 32px; border: 3px solid #e2e8f0; border-top-color: #4f46e5; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px;"></div>
+    <div style="color: #64748b; font-size: 14px;">Đang kiểm tra phiên làm việc...</div>
+  </div>
+
+  <style>
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+
+  <script>
+    (async () => {
+      // If not configured, proceed to dashboard in demo/setup mode
+      if (!window.APP_CONFIG.isConfigured()) {
+        window.location.replace('dashboard.html');
+        return;
+      }
+
+      const session = await window.auth.getCurrentSession();
+      if (session) {
+        window.location.replace('dashboard.html');
+      } else {
+        window.location.replace('login.html');
+      }
+    })();
+  </script>
+</body>
+</html>
