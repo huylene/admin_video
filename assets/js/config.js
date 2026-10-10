@@ -10,7 +10,7 @@
  */
 
 const defaultUrl = 'https://droplgierneghjqdxgcx.supabase.co';
-const defaultAnonKey = 'YOUR_SUPABASE_ANON_OR_PUBLISHABLE_KEY';
+const defaultAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRyb3BsZ2llcm5lZ2hqcWR4Z2N4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEwOTEyNDgsImV4cCI6MjEwNjY2NzI0OH0.FA5uQusQQJ_FWlkYm_7X9VtHOWFwUepsa3YqEt-KTBc';
 
 window.APP_CONFIG = {
   supabaseUrl: localStorage.getItem('SUPABASE_URL') || defaultUrl,
